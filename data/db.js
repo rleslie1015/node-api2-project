@@ -11,6 +11,7 @@ module.exports = {
   findPostComments,
   findCommentById,
   insertComment,
+  addPost
 };
 
 function find() {
@@ -18,7 +19,8 @@ function find() {
 }
 
 function findById(id) {
-  return db('posts').where({ id: Number(id) });
+  return db('posts').where({ id })
+  .first();
 }
 
 function insert(post) {
@@ -29,13 +31,13 @@ function insert(post) {
 
 function update(id, post) {
   return db('posts')
-    .where('id', Number(id))
+    .where({ id })
     .update(post);
 }
 
 function remove(id) {
   return db('posts')
-    .where('id', Number(id))
+    .where({ id })
     .del();
 }
 
@@ -57,4 +59,11 @@ function insertComment(comment) {
   return db('comments')
     .insert(comment)
     .then(ids => ({ id: ids[0] }));
+}
+
+async function addPost(post) {
+  const [id] = await db('posts').insert(post);
+
+  return findById(id);
+  
 }
